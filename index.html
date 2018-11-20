@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>nginx-link-function</title>
+<meta name="generator" content="Jekyll v3.7.4" />
+<meta property="og:title" content="nginx-link-function" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="[“Create your dynamic linkable application on top of nginx module”]" />
+<meta property="og:description" content="[“Create your dynamic linkable application on top application on top of nginx module”]" />
+<link rel="canonical" href="http://0.0.0.0:4000/" />
+<meta property="og:url" content="http://0.0.0.0:4000/" />
+<meta property="og:site_name" content="[“Nginx link function”]" />
+<script type="application/ld+json">
+{"headline":"nginx-link-function","@type":"WebSite","url":"http://0.0.0.0:4000/","name":"[“Nginx link function”]","description":"[“Create your dynamic linkable application on top of nginx module”]","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=91d333111139eaf711893d2ebc955f518a9aaf0b">
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+    <script src="/assets/js/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="/assets/css/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <style>
+    @media all and (max-width: 720px) {
+      .fixed_table_content {
+          }
+            
+        .unfixed_table_content {
+        }
+
+        #mobile-table-of-contents {
+          display: block;
+        }
+
+        #table-of-contents{
+          display: none;
+        }
+
+        #menu_ul > li {
+          padding-top: 5px;
+        }
+
+        .downloadable {
+          display: none;
+        }
+    }
+
+    @media all and (min-width: 721px) {
+
+        #mobile-table-of-contents {
+          display: none;
+        } 
+
+        #table-of-contents{
+          display: block;
+        }
+        .fixed_table_content {
+            border: 1px solid #aaaaaa;
+            border-radius: 7px;
+            /*background: #DDDDDD !important;*/
+            height: 90%;
+            width: 200px;
+            position: fixed;
+            margin-top: 30px;
+            margin-right: 20px;
+            z-index: 1;
+            top: 0px;
+            right: 0px;
+            
+            padding-top: 20px;
+            /*padding-right: 20px;*/
+            overflow: auto;    
+        }
+        .unfixed_table_content {
+            border: 1px solid #aaaaaa;
+            border-radius: 7px;
+            /*background: #DDDDDD !important;*/
+            height: 90%;
+            width: 200px;
+            position: absolute;
+            margin-top: 80px;
+            margin-right: 20px;
+            z-index: 1;
+            top: 30px;
+            right: 0px;
+            padding-top: 20px;
+            /*padding-right: 20px;*/
+            /*padding-left: 20px;*/
+            overflow: auto;    
+        }
+
+        #menu_ul > li {
+          padding-top: 5px;
+        }   
+        .downloadable {
+          display: block;
+        }
+    }
+    </style>
+  </head>
+  <body>
+   <!--  
+    <div id="header">
+      <nav>
+        <li class="fork"><a href="https://github.com/Taymindis/nginx-link-function">View On GitHub</a></li>
+        <li class="fork" style="float:right;"><a href="https://github.com/Taymindis/nginx-link-function/archive/master.zip">Download Source</a></li>          
+      </nav>
+    </div> -->
+
+
+
+  <div id="socketifytablecontent" class="unfixed_table_content">
+    <div id="table-of-contents" style="padding-left: 20px;padding-top: 10px;padding-bottom: 10px;">Table of Contents</div>
+    <ul id="menu_ul" style="list-style: none;">
+      <div id="mobile-table-of-contents" style="padding-left: 20px;padding-top: 10px;padding-bottom: 10px;">Table of Contents</div>
+      <li><a href="https://github.com/Taymindis/nginx-link-function">View On GitHub</a></li>
+      <li><a href="#introduction">Introduction</a></li>
+      <li><a href="#how-it-works">How it works</a></li>
+      <li><a href="#usage">Usage</a></li>
+      <li><a href="#installation">Installation</a></li>
+      <li><a href="#sample-application-development">Sample Application Development</a></li>
+      <li><a href="#test">Test</a></li>
+      <li><a href="https://github.com/Taymindis/nginx-link-function/wiki/Nginx-AIO-threads-for-Concurrent-Request" target="_blank">Multithread request</a></li>
+      <li><a href="https://github.com/Taymindis/nginx-link-function/wiki/Zero-Downtime-deployment-for-different-app-version" target="_blank">Zero Downtime deployment</a></li>
+      <li><a href="https://github.com/Taymindis/nginx-link-function/wiki/Nginx-Cache-Data-via-nginx-link-function" target="_blank">Using nginx Cache Data</a></li>
+      <li><a href="https://github.com/Taymindis/nginx-link-function/wiki/nginx-microservices-with-dynamic-linked-application" target="_blank">Nginx microservices with dynamic linked application</a></li>
+      <li><a href="https://github.com/Taymindis/nginx-link-function/wiki/customizing-your-authentication-by-using-nginx-with-nginx-link-function" target="_blank">Create auth/filtering apps</a></li>
+      <li><a href="https://github.com/Taymindis/nginx-link-function/wiki/Managing-log-files-by-using-logrotate-utility" target="_blank">Managing log files</a></li>
+      <li><a href="https://github.com/Taymindis/nginx-link-function/wiki/Tips-and-Tricks" target="_blank">Tips and Tricks</a></li>
+      <li><a href="#wiki">Wiki</a></li>
+
+
+      <li class="downloadable"><a href="https://github.com/Taymindis/nginx-link-function/archive/master.zip">Download Source</a></li>
+      <li><a href="#support">Support</a></li>
+      <li><a href="#copyright--license">Copyright &amp; License</a></li>
+    </ul>
+  </div>
+  
+    <div class="wrapper">
+      <section>
+        <div id="title">
+          <h1>Nginx link function</h1>
+          <p><i>create your dynamic linkable application on top of nginx module</i></p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/taymindis">taymindis</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+   
+<!-- <h1 id="table-of-contents">Table of Contents</h1> -->
+
+<!-- <ul>
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#how-it-works">How it works</a></li>
+  <li><a href="#usage">Usage</a></li>
+  <li><a href="#installation">Installation</a></li>
+  <li><a href="#sample-application-development">Sample Application Development</a></li>
+  <li><a href="#test">Test</a></li>
+  <li><a href="#support">Support</a></li>
+  <li><a href="#copyright--license">Copyright &amp; License</a></li>
+</ul> -->
+<script>
+  socketifytablecontent = document.getElementById("socketifytablecontent");
+  window.addEventListener("scroll", scrollFunction, false);
+  function scrollFunction() {
+      var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+     // document.getElementById("demo").innerHTML =  document.body.scrollTop || document.documentElement.scrollTop ;
+        if (scrollTop >= 80) {
+            // wrap.addClass("fix-search");
+            socketifytablecontent.classList.add("fixed_table_content");
+            socketifytablecontent.classList.remove("unfixed_table_content");
+        } else {
+          // wrap.removeClass("fix-search");
+            socketifytablecontent.classList.add("unfixed_table_content");
+          socketifytablecontent.classList.remove("fixed_table_content");
+        }
+      }
+</script>
+
+<h1 id="introduction">Introduction</h1>
+
+<p>nginx-link-function is a nginx module which provides dynamic linking to your application in server context and call the function of your application in location directive.You could direct link your C/C++ application (or any other which accept dynamic linking) to nginx server.</p>
+
+<h1 id="how-it-works">How it works</h1>
+
+<p><img src="/nginx-link-function-architecture.png" alt="Image of nginx-link-function" /></p>
+
+<h1 id="usage">Usage</h1>
+<div class="language-nginx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># nginx.conf
+</span>
+<span class="k">server</span> <span class="p">{</span>
+  <span class="kn">listen</span> <span class="mi">8888</span><span class="p">;</span>
+  <span class="kn">...</span>
+  <span class="s">ngx_link_func_lib</span> <span class="s">"/path/to/your/liblinkfuntest.so"</span><span class="p">;</span>
+  <span class="kn">...</span>
+  <span class="s">...</span>
+  <span class="s">location</span> <span class="p">=</span> <span class="n">/testLinkFunGreeting</span> <span class="p">{</span>
+      <span class="c1"># if not variable specified, direct write response out
+</span>      <span class="kn">ngx_link_func_call</span> <span class="s">"my_app_simple_get_greeting"</span><span class="p">;</span> 
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">server</span> <span class="p">{</span>
+  <span class="kn">listen</span> <span class="mi">8989</span><span class="p">;</span>
+  <span class="kn">aio</span> <span class="s">threads</span><span class="p">;</span>
+  <span class="kn">...</span>
+  <span class="s">ngx_link_func_lib</span> <span class="s">"/path/to/your/liblinkfuntest.so"</span><span class="p">;</span> <span class="c1"># sharing data memory with server 1 if the path are same with server 1
+</span>  <span class="kn">...</span>
+  <span class="s">...</span>
+  <span class="s">location</span> <span class="p">=</span> <span class="n">/testLinkFunGreeting</span> <span class="p">{</span>
+      <span class="c1"># if variable specified, not response write out, but it stored into myResponseVariable
+</span>      <span class="kn">ngx_link_func_call</span> <span class="s">"my_app_simple_get_greeting"</span> <span class="s">respTo=myResponseVariable</span><span class="p">;</span>
+
+      <span class="kn">return</span> <span class="mi">200</span> <span class="nv">$myResponseVariable</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">server</span> <span class="p">{</span>
+  <span class="kn">listen</span> <span class="mi">8999</span><span class="p">;</span>
+  <span class="kn">aio</span> <span class="s">threads</span><span class="p">;</span>
+  <span class="kn">...</span>
+  <span class="s">ngx_link_func_lib</span> <span class="s">"/path/to/your/liblinkfuntest2.so"</span><span class="p">;</span> <span class="c1"># another application
+</span>  <span class="kn">...</span>
+  <span class="s">...</span>
+  <span class="s">location</span> <span class="p">=</span> <span class="n">/testPost</span> <span class="p">{</span>
+      <span class="kn">add_header</span> <span class="s">Allow</span> <span class="s">"GET,</span> <span class="s">POST,</span> <span class="s">HEAD"</span> <span class="s">always</span><span class="p">;</span>
+      <span class="kn">if</span> <span class="s">(</span> <span class="nv">$request_method</span> <span class="s">!~</span> <span class="s">^(POST)</span>$ <span class="s">)</span> <span class="p">{</span>
+        <span class="kn">return</span> <span class="mi">405</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="kn">ngx_link_func_call</span> <span class="s">"my_2nd_app_simple_get_token"</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">server</span> <span class="p">{</span>
+  <span class="kn">listen</span> <span class="mi">9888</span><span class="p">;</span>
+  <span class="kn">aio</span> <span class="s">threads</span><span class="p">;</span>
+  <span class="kn">...</span>
+  <span class="c1">## Download application from cloud repo e.g. ngx_link_func_download_and_link_lib &lt;download_link&gt; &lt;dest_link_file&gt;
+</span>  <span class="s">ngx_link_func_download_and_link_lib</span> <span class="s">"http://abc.com/repos/liblinkfuntest.so"</span> <span class="s">"/etc/nginx/liblinkfuntest3.so"</span>
+  <span class="s">...</span>
+  <span class="s">...</span>
+  <span class="s">location</span> <span class="p">=</span> <span class="n">/testPost</span> <span class="p">{</span>
+      <span class="kn">add_header</span> <span class="s">Allow</span> <span class="s">"GET,</span> <span class="s">POST,</span> <span class="s">HEAD"</span> <span class="s">always</span><span class="p">;</span>
+      <span class="kn">if</span> <span class="s">(</span> <span class="nv">$request_method</span> <span class="s">!~</span> <span class="s">^(POST)</span>$ <span class="s">)</span> <span class="p">{</span>
+        <span class="kn">return</span> <span class="mi">405</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="kn">ngx_link_func_call</span> <span class="s">"my_3rd_app_simple_get_token"</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">server</span> <span class="p">{</span>
+  <span class="kn">listen</span> <span class="mi">9898</span><span class="p">;</span>
+  <span class="kn">aio</span> <span class="s">threads</span><span class="p">;</span>
+  <span class="kn">...</span>
+  <span class="c1">## Download application from cloud repo with extra header e.g. ngx_link_func_download_and_link_lib &lt;download_link&gt; &lt;headers&gt; &lt;dest_link_file&gt;
+</span>  <span class="s">ngx_link_func_download_and_link_lib</span> <span class="s">"https://abc.com/repos/liblinkfuntest.so"</span> <span class="s">"Accept-Language:en_US</span><span class="err">\</span><span class="s">r</span><span class="err">\</span><span class="s">nAuthorization:Bearer</span> <span class="s">KA.eyJ2ZXJzaadlasdlaldhjHJ2h3ldjklsjaklcjkljasdklcmasaskdaJxdkL3ftjM</span><span class="err">\</span><span class="s">r</span><span class="err">\</span><span class="s">n"</span> <span class="s">"/etc/nginx/liblinkfuntest4.so"</span>
+  <span class="s">...</span>
+  <span class="s">...</span>
+  <span class="s">location</span> <span class="p">=</span> <span class="n">/testPost</span> <span class="p">{</span>
+      <span class="kn">add_header</span> <span class="s">Allow</span> <span class="s">"GET,</span> <span class="s">POST,</span> <span class="s">HEAD"</span> <span class="s">always</span><span class="p">;</span>
+      <span class="kn">if</span> <span class="s">(</span> <span class="nv">$request_method</span> <span class="s">!~</span> <span class="s">^(POST)</span>$ <span class="s">)</span> <span class="p">{</span>
+        <span class="kn">return</span> <span class="mi">405</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="kn">ngx_link_func_call</span> <span class="s">"my_other_app_simple_get_token"</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h1 id="installation">Installation</h1>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget <span class="s1">'http://nginx.org/download/nginx-1.10.3.tar.gz'</span>
+<span class="nb">tar</span> <span class="nt">-xzvf</span> nginx-1.10.3.tar.gz
+<span class="nb">cd </span>nginx-1.10.3/
+
+./configure <span class="nt">--add-module</span><span class="o">=</span>/path/to/nginx-link-function
+
+make <span class="nt">-j2</span>
+<span class="nb">sudo </span>make install
+</code></pre></div></div>
+
+<h4 id="ngx_link_func_moduleh-header-not-found-when-configure">ngx_link_func_module.h header not found when configure</h4>
+
+<p>When first time configure this project, I purposely do not include this header, you may need to install it to your c header file as this header file need to share with your .so application as well.</p>
+
+<h4 id="example-of-installing-header">Example of installing header</h4>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>install <span class="nt">-m</span> 644 /path/to/nginx-link-function/src/ngx_link_func_module.h /usr/local/include/
+</code></pre></div></div>
+
+<p><a href="#title">Back to Top</a></p>
+
+<h1 id="interface-that-expose-to-client-application">Interface that expose to client application</h1>
+
+<p>This is the interface that you can use to get more details from nginx server, it all inside the ngx_link_func_module.h.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="cp">#define ngx_link_func_content_type_plaintext "text/plain"
+#define ngx_link_func_content_type_html "text/html; charset=utf-8"
+#define ngx_link_func_content_type_json "application/json"
+#define ngx_link_func_content_type_jsonp "application/javascript"
+#define ngx_link_func_content_type_xformencoded "application/x-www-form-urlencoded"
+</span>
+
+<span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+  <span class="kt">char</span> <span class="o">*</span><span class="n">req_args</span><span class="p">;</span> <span class="c1">// Uri Args
+</span>  <span class="n">u_char</span> <span class="o">*</span><span class="n">req_body</span><span class="p">;</span> <span class="c1">// Request Body
+</span>  <span class="kt">size_t</span> <span class="n">req_body_len</span><span class="p">;</span> <span class="c1">// length of body
+</span>  <span class="kt">void</span> <span class="o">*</span><span class="n">shared_mem</span><span class="p">;</span>
+
+  <span class="cm">/* internal */</span>
+  <span class="kt">void</span><span class="o">*</span> <span class="n">__r__</span><span class="p">;</span>
+  <span class="kt">void</span><span class="o">*</span> <span class="n">__pl__</span><span class="p">;</span>
+  <span class="kt">void</span><span class="o">*</span> <span class="n">__log__</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">ngx_link_func_ctx_t</span><span class="p">;</span>
+
+<span class="k">extern</span> <span class="kt">void</span> <span class="n">ngx_link_func_log_debug</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">msg</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="n">ngx_link_func_log_info</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">msg</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="n">ngx_link_func_log_warn</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">msg</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="n">ngx_link_func_log_err</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">msg</span><span class="p">);</span>
+
+<span class="k">extern</span> <span class="n">u_char</span><span class="o">*</span> <span class="n">ngx_link_func_get_header</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span><span class="n">key</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span><span class="o">*</span> <span class="n">ngx_link_func_get_query_param</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">key</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span><span class="o">*</span> <span class="n">ngx_link_func_palloc</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span><span class="o">*</span> <span class="n">ngx_link_func_pcalloc</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">);</span>
+
+<span class="k">extern</span> <span class="kt">char</span> <span class="o">*</span><span class="n">ngx_link_func_strdup</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">src</span><span class="p">);</span>
+
+<span class="k">extern</span> <span class="kt">void</span> <span class="n">ngx_link_func_write_resp</span><span class="p">(</span>
+    <span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span>
+    <span class="kt">uintptr_t</span> <span class="n">status_code</span><span class="p">,</span>
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">status_line</span><span class="p">,</span>
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">content_type</span><span class="p">,</span>
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">resp_content</span><span class="p">,</span>
+    <span class="kt">size_t</span> <span class="n">resp_len</span>
+<span class="p">);</span>
+
+<span class="c1">// Shared Memory and Cache Scope
+</span><span class="k">extern</span> <span class="kt">uintptr_t</span> <span class="n">ngx_link_func_shmtx_trylock</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">shared_mem</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="n">ngx_link_func_shmtx_lock</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">shared_mem</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="n">ngx_link_func_shmtx_unlock</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">shared_mem</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span><span class="o">*</span> <span class="n">ngx_link_func_shm_alloc</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">shared_mem</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="n">ngx_link_func_shm_free</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">shared_mem</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">ptr</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span><span class="o">*</span> <span class="n">ngx_link_func_shm_alloc_locked</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">shared_mem</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="n">ngx_link_func_shm_free_locked</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">shared_mem</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">ptr</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span><span class="o">*</span> <span class="n">ngx_link_func_cache_get</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">shared_mem</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">key</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span><span class="o">*</span> <span class="n">ngx_link_func_cache_put</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">shared_mem</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">key</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="n">value</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span><span class="o">*</span> <span class="n">ngx_link_func_cache_new</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">shared_mem</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">key</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span><span class="o">*</span> <span class="n">ngx_link_func_cache_remove</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">shared_mem</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">key</span><span class="p">);</span>
+
+</code></pre></div></div>
+
+<h2 id="interface-break-down-details">Interface break down details</h2>
+
+<h4 id="malloccalloc-from-nginx-pool-this-pool-will-be-freed-once-finished-request-please-do-not-to-free-by-yourself">malloc/calloc from nginx pool, this pool will be freed once finished request, please do not to free by yourself</h4>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span><span class="o">*</span> <span class="n">ngx_link_func_palloc</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">);</span>
+<span class="kt">void</span><span class="o">*</span> <span class="n">ngx_link_func_pcalloc</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="get-the-request-header-parameter-from">get the request header parameter from</h4>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">extern</span> <span class="n">u_char</span><span class="o">*</span> <span class="n">ngx_link_func_get_header</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span><span class="n">key</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="get-the-uri-args">get the uri args</h4>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ctx</span><span class="o">-&gt;</span><span class="n">req_args</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h4 id="get-the-query-parameter">get the query parameter</h4>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">extern</span> <span class="kt">void</span><span class="o">*</span> <span class="n">ngx_link_func_get_query_param</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">key</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="get-the-request-body">get the request body</h4>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ctx</span><span class="o">-&gt;</span><span class="n">req_body</span><span class="p">;</span>
+<span class="n">ctx</span><span class="o">-&gt;</span><span class="n">req_body_len</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h4 id="loggin-to-nginx-server">loggin to nginx server</h4>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">extern</span> <span class="kt">void</span> <span class="n">ngx_link_func_log_debug</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">msg</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="n">ngx_link_func_log_info</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">msg</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="n">ngx_link_func_log_warn</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">msg</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="n">ngx_link_func_log_err</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">msg</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="response-out">Response out</h4>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">extern</span> <span class="kt">void</span> <span class="n">ngx_link_func_write_resp</span><span class="p">(</span>
+    <span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span>
+    <span class="kt">uintptr_t</span> <span class="n">status_code</span><span class="p">,</span> <span class="c1">// Status code
+</span>    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">status_line</span><span class="p">,</span> <span class="c1">// Status line
+</span>    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">content_type</span><span class="p">,</span> <span class="c1">// Response content type
+</span>    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">resp_content</span> <span class="c1">// Response content
+</span>    <span class="kt">size_t</span> <span class="n">resp_len</span>
+<span class="p">);</span>
+</code></pre></div></div>
+
+<h1 id="sample-application-development">Sample Application Development</h1>
+
+<p>Feel free to clone a sample project on <a href="https://github.com/Taymindis/sample-ngx-cfunc-project">Sample Project</a></p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
+#include &lt;ngx_link_func_module.h&gt;
+</span>
+<span class="cm">/*** build the program as .so library and copy to the preferred place for nginx to link this library ***/</span>
+<span class="cm">/*** gcc -shared -o liblinkfuntest.so -fPIC linkfuntest.c ***/</span>
+<span class="cm">/*** cp liblinkfuntest.so /etc/nginx/ ***/</span>
+
+<span class="kt">int</span> <span class="n">is_service_on</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">ngx_link_func_init</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span><span class="o">*</span> <span class="n">ctx</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">ngx_link_func_log</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="s">"%s"</span><span class="p">,</span> <span class="s">"Starting The Application"</span><span class="p">);</span>
+
+
+    <span class="n">is_service_on</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+
+<span class="kt">void</span> <span class="nf">my_app_simple_get_greeting</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">ngx_link_func_log_info</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="s">"Calling back and log from my_app_simple_get"</span><span class="p">);</span>
+
+    <span class="n">ngx_link_func_write_resp</span><span class="p">(</span>
+        <span class="n">ctx</span><span class="p">,</span>
+        <span class="mi">200</span><span class="p">,</span>
+        <span class="s">"200 OK"</span><span class="p">,</span>
+        <span class="s">"text/plain"</span><span class="p">,</span>
+        <span class="s">"greeting from ngx_http_c_func testing"</span><span class="p">,</span>
+        <span class="k">sizeof</span><span class="p">(</span><span class="s">"greeting from ngx_http_c_func testing"</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">my_app_simple_get_args</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">ngx_link_func_log_info</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="s">"Calling back and log from my_app_simple_get_args"</span><span class="p">);</span>
+
+    <span class="n">ngx_link_func_write_resp</span><span class="p">(</span>
+        <span class="n">ctx</span><span class="p">,</span>
+        <span class="mi">200</span><span class="p">,</span>
+        <span class="s">"200 OK"</span><span class="p">,</span>
+        <span class="s">"text/plain"</span><span class="p">,</span>
+        <span class="n">ctx</span><span class="o">-&gt;</span><span class="n">req_args</span><span class="p">,</span>
+        <span class="n">strlen</span><span class="p">(</span><span class="n">ctx</span><span class="o">-&gt;</span><span class="n">req_args</span><span class="p">)</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">my_app_simple_get_token_args</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">ngx_link_func_log_info</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="s">"Calling back and log from my_app_simple_get_token_args"</span><span class="p">);</span>
+
+    <span class="kt">char</span> <span class="o">*</span> <span class="n">tokenArgs</span> <span class="o">=</span> <span class="n">ngx_link_func_get_query_param</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="s">"token"</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="n">tokenArgs</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">ngx_link_func_write_resp</span><span class="p">(</span>
+            <span class="n">ctx</span><span class="p">,</span>
+            <span class="mi">401</span><span class="p">,</span>
+            <span class="s">"401 unauthorized"</span><span class="p">,</span>
+            <span class="s">"text/plain"</span><span class="p">,</span>
+            <span class="s">"Token Not Found"</span><span class="p">,</span>
+            <span class="k">sizeof</span><span class="p">(</span><span class="s">"Token Not Found"</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">ngx_link_func_write_resp</span><span class="p">(</span>
+            <span class="n">ctx</span><span class="p">,</span>
+            <span class="mi">401</span><span class="p">,</span>
+            <span class="s">"401 unauthorized"</span><span class="p">,</span>
+            <span class="s">"text/plain"</span><span class="p">,</span>
+            <span class="n">tokenArgs</span><span class="p">,</span>
+            <span class="n">strlen</span><span class="p">(</span><span class="n">tokenArgs</span><span class="p">)</span>
+        <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">my_app_simple_post</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">ngx_link_func_log_info</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="s">"Calling back and log from my_app_simple_post"</span><span class="p">);</span>
+
+    <span class="c1">// echo back
+</span>    <span class="n">ngx_link_func_write_resp</span><span class="p">(</span>
+        <span class="n">ctx</span><span class="p">,</span>
+        <span class="mi">202</span><span class="p">,</span>
+        <span class="s">"202 Accepted and Processing"</span><span class="p">,</span>
+        <span class="s">"text/plain"</span><span class="p">,</span>
+        <span class="n">ctx</span><span class="o">-&gt;</span><span class="n">req_body</span><span class="p">,</span>
+        <span class="n">ctx</span><span class="o">-&gt;</span><span class="n">req_body_len</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+
+
+
+<span class="kt">void</span> <span class="nf">my_app_simple_get_no_resp</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">ngx_link_func_log_info</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="s">"Calling back and log from my_app_simple_get_no_resp"</span><span class="p">);</span>
+
+
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">ngx_link_func_exit</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span><span class="o">*</span> <span class="n">ctx</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">ngx_link_func_log</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="s">"%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="s">"Shutting down The Application"</span><span class="p">);</span>
+
+    <span class="n">is_service_on</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="noted">Noted:</h4>
+<p>The link-func init and exit are reserved function when started the nginx, it will call init method, when stop nginx, it will call exit function.</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="n">ngx_link_func_init</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span><span class="o">*</span> <span class="n">ctx</span><span class="p">){}</span>
+<span class="kt">void</span> <span class="n">ngx_link_func_exit</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span><span class="o">*</span> <span class="n">ctx</span><span class="p">){}</span>
+</code></pre></div></div>
+
+<h4 id="log-level">Log Level</h4>
+<p>The log can be called, the logged message will be store where you config error log in nginx.conf</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ngx_link_func_log_info</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="s">"This is info direct message"</span><span class="p">);</span>
+<span class="n">ngx_link_func_log</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="s">"%s"</span><span class="p">,</span> <span class="s">"This is info with formatted message"</span><span class="p">);</span>
+<span class="n">ngx_link_func_log_debug</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="s">"This is debug direct message"</span><span class="p">);</span>
+<span class="n">ngx_link_func_log</span><span class="p">(</span><span class="n">debug</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="s">"%s"</span><span class="p">,</span> <span class="s">"This is debug with formatted message"</span><span class="p">);</span>
+
+<span class="n">ngx_link_func_log_info</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="s">"%s"</span><span class="p">,</span> <span class="s">"This is info with formatted message"</span><span class="p">);</span> <span class="c1">// Wrong format
+</span><span class="n">ngx_link_func_log_debug</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="s">"%s"</span><span class="p">,</span> <span class="s">"This is info with formatted message"</span><span class="p">);</span> <span class="c1">// Wrong format
+</span></code></pre></div></div>
+
+<h3 id="provide-ca-cert-to-download-your-appso-please-embedded-this-in-your-nginxconfs-server-context">provide ca-cert to download your app(.so)?? please embedded this in your nginx.conf’s server context.</h3>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ngx_link_func_ca_cert</span> <span class="s">"/etc/ssl/certs/ca-cert.crt"</span>
+<span class="n">ngx_link_func_download_and_link_lib</span> <span class="s">"https://abc.com/repos/liblinkfuntest.so"</span> <span class="s">"/etc/nginx/liblinkfuntest4.so"</span>
+</code></pre></div></div>
+
+<h3 id="provide-ca-cert-and-extra-header-to-download-your-appso-please-embedded-this-in-your-nginxconfs-server-context">provide ca-cert and extra header to download your app(.so)?? please embedded this in your nginx.conf’s server context.</h3>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ngx_link_func_ca_cert</span> <span class="s">"/etc/ssl/certs/ca-cert.crt"</span>
+<span class="n">ngx_link_func_download_and_link_lib</span> <span class="s">"https://abc.com/repos/liblinkfuntest.so"</span> <span class="s">"Accept-Language:en_US</span><span class="se">\r\n</span><span class="s">Authorization:Bearer KA.eyJ2ZXJzaadlasdlaldhjHJ2h3ldjklsjaklcjkljasdklcmasaskdaJxdkL3ftjM</span><span class="se">\r\n</span><span class="s">"</span> <span class="s">"/etc/nginx/liblinkfuntest4.so"</span>
+
+</code></pre></div></div>
+
+<h1 id="test">Test</h1>
+
+<p>It depends on nginx test suite libs, please refer <a href="https://github.com/openresty/test-nginx">test-nginx</a> for installation.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> /path/to/nginx-link-function
+<span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span>/path/to/nginx-dirname:<span class="nv">$PATH</span> 
+<span class="nb">sudo </span>prove <span class="nt">-r</span> t/
+</code></pre></div></div>
+
+<p><a href="#title">Back to Top</a></p>
+
+<h1 id="wiki">Wiki</h1>
+
+<p>Browse <a href="https://github.com/Taymindis/nginx-link-function/wiki">Wiki</a> for more details </p>
+
+<h1 id="support">Support</h1>
+
+<p>Please do not hesitate to raise an <a href="https://github.com/Taymindis/nginx-link-function/issues">issue</a> and I will fixed it as soon as I can</p>
+<p>Alternatively, you may email to minikawoon2017@gmail.com </p>
+
+<p><a href="#title">Back to Top</a></p>
+
+<h1 id="copyright--license">Copyright &amp; License</h1>
+
+<p>Copyright (c) 2018, Taymindis <a href="mailto:cloudleware2015@gmail.com">cloudleware2015@gmail.com</a></p>
+
+<p>This module is licensed under the terms of the BSD license.</p>
+
+<p>All rights reserved.</p>
+
+<p>Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:</p>
+
+<ol>
+  <li>Redistributions of source code must retain the above copyright notice, this
+list of conditions and the following disclaimer.</li>
+  <li>Redistributions in binary form must reproduce the above copyright notice,
+this list of conditions and the following disclaimer in the documentation
+and/or other materials provided with the distribution.</li>
+</ol>
+
+<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+
+<p><a href="#title">Back to Top</a></p>
+
+
+      </section>
+
+    </div>
+
+    
+  </body>
+</html>
