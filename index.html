@@ -128,10 +128,10 @@
       <li><a href="#installation">Installation</a></li>
       <li><a href="#sample-application-development">Sample Application Development</a></li>
       <li><a href="#test">Test</a></li>
+      <li><a href="#microservice-with-nginx-link-function">Nginx microservices with dynamic linked application</a></li>
       <li><a href="https://github.com/Taymindis/nginx-link-function/wiki/Nginx-AIO-threads-for-Concurrent-Request" target="_blank">Multithread request</a></li>
       <li><a href="https://github.com/Taymindis/nginx-link-function/wiki/Zero-Downtime-deployment-for-different-app-version" target="_blank">Zero Downtime deployment</a></li>
       <li><a href="https://github.com/Taymindis/nginx-link-function/wiki/Nginx-Cache-Data-via-nginx-link-function" target="_blank">Using nginx Cache Data</a></li>
-      <li><a href="https://github.com/Taymindis/nginx-link-function/wiki/nginx-microservices-with-dynamic-linked-application" target="_blank">Nginx microservices with dynamic linked application</a></li>
       <li><a href="https://github.com/Taymindis/nginx-link-function/wiki/customizing-your-authentication-by-using-nginx-with-nginx-link-function" target="_blank">Create auth/filtering apps</a></li>
       <li><a href="https://github.com/Taymindis/nginx-link-function/wiki/Managing-log-files-by-using-logrotate-utility" target="_blank">Managing log files</a></li>
       <li><a href="https://github.com/Taymindis/nginx-link-function/wiki/Tips-and-Tricks" target="_blank">Tips and Tricks</a></li>
@@ -537,6 +537,95 @@ make <span class="nt">-j2</span>
 </code></pre></div></div>
 
 <p><a href="#title">Back to Top</a></p>
+
+
+<h1 id="microservice-with-nginx-link-function">microservice with nginx-link-function</h1>
+
+<h4 id="for-nginx-nginx-link-function-has-provided-the-following-functions-to-achieve-the-communication-with-other-application-service-these-functions-are-built-in-on-top-of-nginx-it-is-purely-based-on-nginx">for nginx nginx-link-function has provided the following functions to achieve the communication with other application service. These functions are built in on top of nginx, it is purely based on nginx.</h4>
+
+<p><img src="/nginx_link_function_microservice.png" alt="illustration of nginx_link_function_microservice" /></p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">extern</span> <span class="n">u_char</span><span class="o">*</span> <span class="n">ngx_link_func_get_header</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span><span class="n">key</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span><span class="o">*</span> <span class="n">ngx_link_func_get_query_param</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">key</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">int</span> <span class="n">ngx_link_func_add_header_in</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">keylen</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">value</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">val_len</span> <span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="n">ngx_link_func_write_resp</span><span class="p">(</span>
+    <span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span>
+    <span class="kt">uintptr_t</span> <span class="n">status_code</span><span class="p">,</span>
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">status_line</span><span class="p">,</span>
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">content_type</span><span class="p">,</span>
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">resp_content</span><span class="p">,</span>
+    <span class="kt">size_t</span> <span class="n">resp_len</span>
+<span class="p">);</span>
+</code></pre></div></div>
+
+<h3 id="for-every-nginx-link-function-linked-application-you-may-apply-the-functions-above-to-achieve-the-inter-communication-between-the-services-for-example-authenthication-you-may-get-the-useridtoken-and-etc-from-headers">For every nginx-link-function linked application, you may apply the functions above to achieve the inter communication between the services. For example authenthication, you may get the userId,token, and etc from headers.</h3>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">interRouteCallForChecking</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span> <span class="o">*</span><span class="n">ctx</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">interRouteCallForChecking</span><span class="p">...........</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="n">OK</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">ngx_link_func_add_header_in</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="s">"okToProceed"</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="s">"okToProceed"</span><span class="p">)</span> <span class="o">-</span><span class="mi">1</span> <span class="p">,</span>  <span class="s">"true"</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="s">"true"</span><span class="p">)</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">ngx_link_func_write_resp</span><span class="p">(</span>
+            <span class="n">ctx</span><span class="p">,</span>
+            <span class="mi">200</span><span class="p">,</span>
+            <span class="nb">NULL</span><span class="p">,</span>
+            <span class="n">ngx_link_func_content_type_plaintext</span><span class="p">,</span>
+            <span class="s">"OK"</span><span class="p">,</span>
+            <span class="k">sizeof</span><span class="p">(</span><span class="s">"OK"</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">ngx_link_func_write_resp</span><span class="p">(</span>
+            <span class="n">ctx</span><span class="p">,</span>
+            <span class="mi">404</span><span class="p">,</span>
+            <span class="nb">NULL</span><span class="p">,</span>
+            <span class="n">ngx_link_func_content_type_plaintext</span><span class="p">,</span>
+            <span class="s">"NOT FOUND"</span><span class="p">,</span>
+            <span class="k">sizeof</span><span class="p">(</span><span class="s">"NOT FOUND"</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="p">);</span>
+    <span class="p">}</span>
+
+    
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<div class="language-nginx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ngx_link_func_lib</span> <span class="s">"/home/taymindis/github/nginx-link-function/t/Myapp.so"</span><span class="p">;</span>
+<span class="k">location</span> <span class="n">/internalRoute</span><span class="p">{</span>
+    <span class="kn">internal</span><span class="p">;</span>
+    <span class="kn">ngx_link_func_call</span> <span class="s">"interRouteCallForChecking"</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">location</span> <span class="p">=</span> <span class="n">/externalRoute</span> <span class="p">{</span>
+    <span class="kn">ngx_link_func_add_req_header</span> <span class="s">userId</span> <span class="nv">$arg_userId</span><span class="p">;</span> <span class="c1"># add addition header in proxy if needed
+</span>    <span class="kn">ngx_link_func_add_req_header</span> <span class="s">userSessionToken</span> <span class="nv">$arg_userSessionToken</span><span class="p">;</span> <span class="c1"># add addition header in proxy if needed
+</span>    <span class="kn">proxy_pass</span> <span class="s">"http://otherapplication/..."</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">location</span> <span class="p">=</span> <span class="n">/callProcess</span> <span class="p">{</span>
+  <span class="kn">ngx_link_func_subrequest</span> <span class="n">/internalRoute</span> <span class="s">sequential</span><span class="p">;</span> <span class="c1"># this will run and wait till finish then proceed to next subrequest
+</span>  <span class="kn">ngx_link_func_subrequest</span> <span class="n">/externalRoute</span> <span class="s">parallel</span><span class="p">;</span> <span class="c1"># this will run without waiting other subrequest
+</span>
+  <span class="kn">ngx_link_func_call</span> <span class="s">"afterDoneVerification"</span><span class="p">;</span> <span class="c1"># if proxy_pass is given, the response will be ignored, it will route to next phase which is proxy pass, if proxy pass not given, it should have response content
+</span>
+  <span class="kn">proxy_pass</span> <span class="s">http://127.0.0.1:</span>$<span class="p">{</span><span class="kn">server_port</span><span class="err">}</span><span class="n">/backendProcess?userSuccessStatus=</span><span class="nv">$http_userSuccessStatus</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>There are a lot of directive which able to support routing service, such as:</p>
+
+<p><a href="https://github.com/Taymindis/nginx-link-function/wiki/Tips-and-Tricks#10-ngx_link_func_subrequest-directive-for-you-multiple-subrequest-run-parallelasync-or-sequentialsync-using-ngx_link_func_add_header_inctx-or-ngx_link_func_add_req_header-directive-for-communicate-each-service-that-you-have-sub-requesting-to">ngx_link_func_subrequest</a></p>
+
+<p><a href="http://nginx.org/en/docs/http/ngx_http_proxy_module.html">proxy directive</a></p>
+
+<p><a href="http://nginx.org/en/docs/http/ngx_http_mirror_module.html">mirror directirve</a></p>
+
+<p><a href="https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-subrequest-authentication/">auth_request</a></p>
+
+<p><a href="http://nginx.org/en/docs/http/ngx_http_addition_module.html">addition directive</a></p>
+
+<p><a href="https://github.com/Taymindis/nginx-link-function/wiki/nginx-microservices-with-dynamic-linked-application">references</a></p>
+
+<p><em>to be continue</em></p>
+
+
 
 <h1 id="wiki">Wiki</h1>
 
