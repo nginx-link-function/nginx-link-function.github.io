@@ -604,8 +604,8 @@ make <span class="nt">-j2</span>
 <span class="p">}</span>
 <span class="k">location</span> <span class="p">=</span> <span class="n">/callProcess</span> <span class="p">{</span>
   <span class="kn">ngx_link_func_subrequest</span> <span class="n">/internalRoute</span> <span class="s">check_status</span><span class="p">;</span> <span class="c1"># check_status will run and wait till finish then proceed to next subrequest, but it checks for the response status, if error status, it will break the request.
-</span>  <span class="kn">ngx_link_func_subrequest</span><span class="n">/externalRoute</span><span class="p">;</span> <span class="c1"># this will run with waiting other subrequest
-</span>   <span class="kn">ngx_link_func_subrequest</span><span class="n">/asyncRoute</span><span class="p">;</span> <span class="c1"># this will run without waiting for response and go for the next subrequest of request handler
+  </span>  <span class="kn">ngx_link_func_subrequest</span> <span class="n">/externalRoute</span><span class="p">;</span> <span class="c1"># this will run with waiting other subrequest
+</span>   <span class="kn">ngx_link_func_subrequest</span> <span class="n">/asyncRoute</span><span class="p">;</span> <span class="c1"># this will run without waiting for response and go for the next subrequest or function handler or proxy handler depends the next config level
 </span>
   <span class="kn">ngx_link_func_call</span> <span class="s">"afterDoneVerification"</span><span class="p">;</span> <span class="c1"># if proxy_pass is given, the response will be ignored, it will route to next phase which is proxy pass, if proxy pass not given, it should have response content
 </span>
