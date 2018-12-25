@@ -410,8 +410,8 @@ make <span class="nt">-j2</span>
 
 <span class="kt">int</span> <span class="n">is_service_on</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-<span class="kt">void</span> <span class="nf">ngx_link_func_init</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span><span class="o">*</span> <span class="n">ctx</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">ngx_link_func_log</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="s">"%s"</span><span class="p">,</span> <span class="s">"Starting The Application"</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">ngx_link_func_init_cycle</span><span class="p">(</span><span class="n">ngx_link_func_cycle_t</span><span class="o">*</span> <span class="n">cyc</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">ngx_link_func_cyc_log</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">cyc</span><span class="p">,</span> <span class="s">"%s"</span><span class="p">,</span> <span class="s">"Starting The Application"</span><span class="p">);</span>
 
 
     <span class="n">is_service_on</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
@@ -492,8 +492,8 @@ make <span class="nt">-j2</span>
 
 <span class="p">}</span>
 
-<span class="kt">void</span> <span class="nf">ngx_link_func_exit</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span><span class="o">*</span> <span class="n">ctx</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">ngx_link_func_log</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="s">"%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="s">"Shutting down The Application"</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">ngx_link_func_exit_cycle</span><span class="p">(</span><span class="n">ngx_link_func_cycle_t</span><span class="o">*</span> <span class="n">cyc</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">ngx_link_func_cyc_log</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">cyc</span><span class="p">,</span> <span class="s">"%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="s">"Shutting down The Application"</span><span class="p">);</span>
 
     <span class="n">is_service_on</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span>
@@ -501,8 +501,8 @@ make <span class="nt">-j2</span>
 
 <h4 id="noted">Noted:</h4>
 <p>The link-func init and exit are reserved function when started the nginx, it will call init method, when stop nginx, it will call exit function.</p>
-<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="n">ngx_link_func_init</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span><span class="o">*</span> <span class="n">ctx</span><span class="p">){}</span>
-<span class="kt">void</span> <span class="n">ngx_link_func_exit</span><span class="p">(</span><span class="n">ngx_link_func_ctx_t</span><span class="o">*</span> <span class="n">ctx</span><span class="p">){}</span>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="n">ngx_link_func_init_cycle</span><span class="p">(</span><span class="n">ngx_link_func_cycle_t</span><span class="o">*</span> <span class="n">cyc</span><span class="p">){}</span>
+<span class="kt">void</span> <span class="n">ngx_link_func_exit_cycle</span><span class="p">(</span><span class="n">ngx_link_func_cycle_t</span><span class="o">*</span> <span class="n">cyc</span><span class="p">){}</span>
 </code></pre></div></div>
 
 <h4 id="log-level">Log Level</h4>
